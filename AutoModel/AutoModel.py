@@ -50,6 +50,8 @@ class AutoModel:
                 "If no score_func is supplied, model must have .score method")
         elif not has_score:
             scoring = score_func
+        else:
+            scoring = None
 
         rsCV = RandomizedSearchCV(
             self.model,
@@ -62,3 +64,15 @@ class AutoModel:
         )
         rsCV.fit(X, y)
         return rsCV
+
+
+if __name__ == "__main__":
+    from sklearn.linear_model import LogisticRegression
+    from sklearn.datasets.samples_generator import make_blobs
+    import numpy as np
+
+    X, y = make_blobs()
+    param_dict = {"C": np.linspace(1e-3, 3, 4)}
+    am = AutoModel(LogisticRegression())
+    rs = am.search_fit(X, y, param_dict)
+    print(rs.best_score_)
